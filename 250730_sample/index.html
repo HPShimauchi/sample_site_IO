@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>安全注意文抽出システム</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    background-color: #f8f8f8;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ccc;
+  }
+  header a.logo-link {
+    display: inline-block;
+    margin-right: 15px;
+  }
+  header a.logo-link img {
+    height: 40px;
+    width: auto;
+    vertical-align: middle;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.0rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  header h1 .bold-redpurple {
+    font-weight: bold;
+    color: #6B2E6B;
+  }
+
+  .filter-area {
+    background-color: #E6D0E6;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+  }
+
+  .button-area {
+    margin-top: 15px;
+  }
+
+  .result-area {
+    background-color: #fff;
+    margin-top: 10px;
+    padding: 10px 15px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  td.main-col {
+    font-weight: bold;
+  }
+
+  img.symbol-icon {
+    width: 40px;
+    height: auto;
+  }
+
+  button {
+    font-size: 1rem;
+    width: 120px;
+    height: 50px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="https://www.horsay.co.jp/" target="_blank" rel="noopener" class="logo-link">
+    <img src="img/logo.png" alt="Horsay Logo" />
+  </a>
+  <h1><span class="bold-redpurple">安全上の注意</span> 管理サイト</h1>
+</header>
+
+<div class="filter-area">
+  <h3>カテゴリ</h3>
+  <label><input type="checkbox" class="category" value="category_circulator" /> サーキュレーター</label>
+  <label><input type="checkbox" class="category" value="category_refrigerator" /> 冷蔵庫</label>
+  <label><input type="checkbox" class="category" value="category_cleaner" /> 掃除機</label>
+  <label><input type="checkbox" class="category" value="category_laundry" /> 洗濯機</label>
+  <label><input type="checkbox" class="category" value="category_others" /> その他</label>
+
+  <h3>仕様</h3>
+  <label><input type="checkbox" class="spec" value="spec_wifi" /> Wi-Fi</label>
+  <label><input type="checkbox" class="spec" value="spec_bluetooth" /> Bluetooth</label>
+  <label><input type="checkbox" class="spec" value="spec_grounding" /> アース接続必要</label>
+  <label><input type="checkbox" class="spec" value="spec_rechargeable" /> 充電式</label>
+  <label><input type="checkbox" class="spec" value="spec_ac_cord" /> 電源コード</label>
+  <label><input type="checkbox" class="spec" value="spec_ac_adaptor" /> ACアダプター</label>
+  <label><input type="checkbox" class="spec" value="spec_heavy_load" /> 重量物</label>
+
+  <div class="button-area">
+    <button id="btnDisplay">表示</button>
+    <button id="btnExtract">CSVに抽出</button>
+  </div>
+</div>
+
+<div class="result-area" id="resultArea">
+</div>
+
+<script>
+let data = [];
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',');
+  return lines.slice(1).map(line => {
+    const cols = line.split(',');
+    // 足りない列を空文字で埋める
+    while (cols.length < headers.length) cols.push('');
+    let obj = {};
+    headers.forEach((h,i) => obj[h] = cols[i] || "");
+    return obj;
+  });
+}
+
+function convertLevel(level) {
+  switch(level) {
+    case 'warning': return '警告';
+    case 'danger': return '危険';
+    case 'caution': return '注意';
+    default: return level;
+  }
+}
+
+function getSymbolHTML(symbol) {
+  const knownSymbols = ['execution', 'prohibition', 'unique00', 'unique01', 'unique02', 'unique03', 'unique04', 'unique05', 'unique06', 'unique07'];
+  if (knownSymbols.includes(symbol)) {
+    return `<img class="symbol-icon" src="img/${symbol}.png" alt="${symbol}">`;
+  }
+  return symbol || '';
+}
+
+window.onload = () => {
+  fetch('./safety_precaution_data.csv')
+    .then(response => {
+      if (!response.ok) throw new Error('CSV読み込み失敗');
+      return response.text();
+    })
+    .then(text => {
+      data = parseCSV(text);
+      console.log('CSVデータ読み込み完了:', data.length, '件');
+    })
+    .catch(err => alert('CSVファイルの読み込みに失敗しました。\n' + err));
+};
+
+function getCheckedValues(selector) {
+  return Array.from(document.querySelectorAll(selector + ':checked')).map(e => e.value);
+}
+
+function filterData() {
+  const categories = getCheckedValues('.category');
+  const specs = getCheckedValues('.spec');
+  if(categories.length === 0 && specs.length === 0) return data;
+
+  return data.filter(row => {
+    const catOk = categories.length > 0 ? categories.some(cat => row[cat] === '1') : false;
+    const specOk = specs.length > 0 ? specs.some(spec => row[spec] === '1') : false;
+    return catOk || specOk;
+  });
+}
+
+function displayData(filtered) {
+  const resultArea = document.getElementById('resultArea');
+  if (filtered.length === 0) {
+    resultArea.innerHTML = '<p>該当なし</p>';
+    return;
+  }
+
+  let html = '<table><thead><tr><th>区分</th><th>マーク</th><th>本文</th><th>副次文</th><th>備考</th></tr></thead><tbody>';
+  filtered.forEach(r => {
+    const noteText = (typeof r.note !== 'undefined' && r.note.trim() !== '') ? r.note : '';
+    html += `<tr>
+      <td>${convertLevel(r.level)}</td>
+      <td>${getSymbolHTML(r.symbol)}</td>
+      <td class="main-col">${r.main}</td>
+      <td>${r.sub}</td>
+      <td>${noteText}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  resultArea.innerHTML = html;
+}
+
+function exportCSV(filtered) {
+  if (filtered.length === 0) {
+    alert('該当データがありません。');
+    return;
+  }
+  const header = ['区分','マーク','本文','副次文','備考'];
+  const rows = filtered.map(r => {
+    const levelJp = convertLevel(r.level);
+    const symbolText = r.symbol || '';
+    const noteText = (typeof r.note !== 'undefined' && r.note.trim() !== '') ? r.note : '';
+    return [
+      `"${levelJp.replace(/"/g,'""')}"`,
+      `"${symbolText.replace(/"/g,'""')}"`,
+      `"${(r.main||'').replace(/"/g,'""')}"`,
+      `"${(r.sub||'').replace(/"/g,'""')}"`,
+      `"${noteText.replace(/"/g,'""')}"`
+    ].join(',');
+  });
+  const csvContent = [header.join(','), ...rows].join('\r\n');
+  const bom = new Uint8Array([0xEF,0xBB,0xBF]);
+  const blob = new Blob([bom, csvContent], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'extracted_safety_notes.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('btnDisplay').addEventListener('click', () => {
+  const filtered = filterData();
+  displayData(filtered);
+});
+
+document.getElementById('btnExtract').addEventListener('click', () => {
+  const filtered = filterData();
+  exportCSV(filtered);
+});
+</script>
+
+</body>
+</html>
