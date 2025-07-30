@@ -9,35 +9,43 @@
     font-family: sans-serif;
   }
   header {
-    display: flex;
-    align-items: center;
-    background-color: #f8f8f8;
-    padding: 10px 15px;
-    border-bottom: 1px solid #ccc;
-  }
+  display: flex;
+  justify-content: space-between; /* 左右に分ける */
+  align-items: center;
+  background-color: #f8f8f8;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ccc;
+  position: relative; /* pdf-list の配置のためにも必要 */
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
   header a.logo-link {
     display: inline-block;
-    margin-right: 15px;
+    margin-right: 12px;
   }
   header a.logo-link img {
-    height: 40px;
+    height: 36px;
     width: auto;
     vertical-align: middle;
   }
   header h1 {
     margin: 0;
-    font-size: 2.0rem;
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
     gap: 4px;
   }
   header h1 .bold-redpurple {
     font-weight: bold;
-    color: #6B2E6B;
+    color: #e00505da;
   }
 
   .filter-area {
-    background-color: #E6D0E6;
+    background-color: #f1babe;
     padding: 10px 15px;
     margin-bottom: 15px;
   }
@@ -82,50 +90,113 @@
   }
   
   .pdf-button {
-    margin-left: auto;
-    padding: 10px 16px;
-    width: 240px; /* お好みで */
-    background-color: #6B2E6B;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
+  width: 200px;
+  padding: 10px 10px;
+  background-color: #e00505da;;
+  color: white;
+  border: 1px solid #e00505da;;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease;
+}
 
-  .pdf-list {
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 15px;
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    padding: 10px;
-    z-index: 1000;
-  }
+.pdf-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
 
-  .pdf-list a {
-    display: block;
-    text-decoration: none;
-    color: #333;
-    margin: 6px 0;
-  }
+.contact-button {
+  display: inline-block;
+  width: 160px;
+  margin-left: 6px;
+  padding: 10px 16px;
+  background-color: white;
+  color: #e00505da;;
+  border: 2px solid #e00505da;;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
 
-  .pdf-list a:hover {
-    text-decoration: underline;
-  }
+.contact-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.pdf-list {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 15px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 10px;
+  z-index: 1000;
+}
+
+.pdf-list a {
+  display: block;
+  text-decoration: none;
+  color: #333;
+  margin: 6px 0;
+}
+
+.pdf-list a:hover {
+  text-decoration: underline;
+}
+
+  .contact-button {
+  display: inline-block;
+  width: auto; /* 内容に応じた幅 */
+  max-width: 180px; /* 必要に応じて制限 */
+  margin-left: 4px;
+  padding: 10px 16px;
+  background-color: white;
+  color: #e00505da;;
+  border: 2px solid #e00505da;;
+  border-radius: 6px;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.contact-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
 
 </style>
 </head>
 <body>
 
 <header>
-  <a href="https://www.horsay.co.jp/" target="_blank" rel="noopener" class="logo-link">
-    <img src="img/logo.png" alt="Horsay Logo" />
-  </a>
-  <h1><span class="bold-redpurple">安全上の注意</span> 管理サイト</h1>
-  <button class="pdf-button" id="pdfToggleBtn">問い合わせ一覧はコチラ</button>
+  <!-- 左側：ロゴとタイトル -->
+  <div style="display: flex; align-items: center;">
+    <a href="https://www.horsay.co.jp/" target="_blank" rel="noopener" class="logo-link">
+      <img src="img/logo.png" alt="Horsay Logo" />
+    </a>
+    <h1><span class="bold-redpurple">安全上の注意</span> 管理サイト</h1>
+  </div>
+
+  <!-- 右側：ボタンエリア -->
+  <div class="header-buttons">
+    <button class="pdf-button" id="pdfToggleBtn">アイリスコール(最新版)</button>
+    <a href="https://www.horsay.co.jp/contact.html" class="contact-button" target="_blank" rel="noopener">修正・変更を依頼する</a>
+  </div>
+
+  <!-- PDFリンクリスト -->
   <div class="pdf-list" id="pdfList">
     <a href="pdf/IRIScall_smallap_20250508.pdf" target="_blank">小型家電</a>
     <a href="pdf/IRIScall_majorap_20250508.pdf" target="_blank">大型家電</a>
@@ -135,8 +206,9 @@
     <a href="pdf/IRIScall_house_20250508.pdf" target="_blank">ホーム</a>
     <a href="pdf/IRIScall_health_20250508.pdf" target="_blank">ヘルスケア</a>
   </div>
-
 </header>
+
+
 
 <div class="filter-area">
   <h3>カテゴリ</h3>
