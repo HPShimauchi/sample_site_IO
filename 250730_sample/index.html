@@ -80,6 +80,42 @@
     margin-right: 10px;
     cursor: pointer;
   }
+  
+  .pdf-button {
+    margin-left: auto;
+    padding: 10px 16px;
+    width: 240px; /* お好みで */
+    background-color: #6B2E6B;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .pdf-list {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 15px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    padding: 10px;
+    z-index: 1000;
+  }
+
+  .pdf-list a {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    margin: 6px 0;
+  }
+
+  .pdf-list a:hover {
+    text-decoration: underline;
+  }
+
 </style>
 </head>
 <body>
@@ -89,6 +125,17 @@
     <img src="img/logo.png" alt="Horsay Logo" />
   </a>
   <h1><span class="bold-redpurple">安全上の注意</span> 管理サイト</h1>
+  <button class="pdf-button" id="pdfToggleBtn">問い合わせ一覧はコチラ</button>
+  <div class="pdf-list" id="pdfList">
+    <a href="pdf/IRIScall_smallap_20250508.pdf" target="_blank">小型家電</a>
+    <a href="pdf/IRIScall_majorap_20250508.pdf" target="_blank">大型家電</a>
+    <a href="pdf/IRIScall_oa_20250508.pdf" target="_blank">OA</a>
+    <a href="pdf/IRIScall_wifi_20250508.pdf" target="_blank">Wi-Fi</a>
+    <a href="pdf/IRIScall_digital_20250508.pdf" target="_blank">デジタル家電</a>
+    <a href="pdf/IRIScall_house_20250508.pdf" target="_blank">ホーム</a>
+    <a href="pdf/IRIScall_health_20250508.pdf" target="_blank">ヘルスケア</a>
+  </div>
+
 </header>
 
 <div class="filter-area">
@@ -239,6 +286,22 @@ document.getElementById('btnExtract').addEventListener('click', () => {
   const filtered = filterData();
   exportCSV(filtered);
 });
+
+// PDFボタン表示切り替え
+document.getElementById('pdfToggleBtn').addEventListener('click', () => {
+  const list = document.getElementById('pdfList');
+  list.style.display = (list.style.display === 'block') ? 'none' : 'block';
+});
+
+// ページ外クリックで閉じる
+document.addEventListener('click', (event) => {
+  const btn = document.getElementById('pdfToggleBtn');
+  const list = document.getElementById('pdfList');
+  if (!btn.contains(event.target) && !list.contains(event.target)) {
+    list.style.display = 'none';
+  }
+});
+
 </script>
 
 </body>
