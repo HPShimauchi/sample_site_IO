@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<title>安全注意文抽出システム</title>
+<title>安全注意文管理システム（仮）</title>
 <style>
   body {
     margin: 0;
@@ -45,7 +45,7 @@
   }
 
   .filter-area {
-    background-color: #f1babe;
+    background-color: #fad4d7;
     padding: 10px 15px;
     margin-bottom: 15px;
   }
@@ -131,16 +131,22 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+.pdf-button-wrapper {
+  position: relative; /* pdf-list の absolute 配置の基準にする */
+  display: inline-block;
+}
+
 .pdf-list {
   display: none;
   position: absolute;
-  top: 60px;
-  right: 15px;
+  top: 100%;  /* ボタンの真下 */
+  left: 0;    /* ボタンの左端に揃える */
   background-color: white;
   border: 1px solid #ccc;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   padding: 10px;
   z-index: 1000;
+  min-width: 200px; /* ボタン幅と同じくらいに */
 }
 
 .pdf-list a {
@@ -192,33 +198,34 @@
 
   <!-- 右側：ボタンエリア -->
   <div class="header-buttons">
+  <div class="pdf-button-wrapper">
     <button class="pdf-button" id="pdfToggleBtn">アイリスコール(最新版)</button>
-    <a href="https://www.horsay.co.jp/contact.html" class="contact-button" target="_blank" rel="noopener">修正・変更を依頼する</a>
+    <!-- PDFリンクリストをここに移動 -->
+    <div class="pdf-list" id="pdfList">
+      <a href="pdf/IRIScall_smallap_20250508.pdf" target="_blank">小型家電</a>
+      <a href="pdf/IRIScall_majorap_20250508.pdf" target="_blank">大型家電</a>
+      <a href="pdf/IRIScall_oa_20250508.pdf" target="_blank">OA</a>
+      <a href="pdf/IRIScall_wifi_20250508.pdf" target="_blank">Wi-Fi</a>
+      <a href="pdf/IRIScall_digital_20250508.pdf" target="_blank">デジタル家電</a>
+      <a href="pdf/IRIScall_house_20250508.pdf" target="_blank">ホーム</a>
+      <a href="pdf/IRIScall_health_20250508.pdf" target="_blank">ヘルスケア</a>
+    </div>
   </div>
-
-  <!-- PDFリンクリスト -->
-  <div class="pdf-list" id="pdfList">
-    <a href="pdf/IRIScall_smallap_20250508.pdf" target="_blank">小型家電</a>
-    <a href="pdf/IRIScall_majorap_20250508.pdf" target="_blank">大型家電</a>
-    <a href="pdf/IRIScall_oa_20250508.pdf" target="_blank">OA</a>
-    <a href="pdf/IRIScall_wifi_20250508.pdf" target="_blank">Wi-Fi</a>
-    <a href="pdf/IRIScall_digital_20250508.pdf" target="_blank">デジタル家電</a>
-    <a href="pdf/IRIScall_house_20250508.pdf" target="_blank">ホーム</a>
-    <a href="pdf/IRIScall_health_20250508.pdf" target="_blank">ヘルスケア</a>
-  </div>
+  <a href="https://www.horsay.co.jp/contact.html" class="contact-button" target="_blank" rel="noopener">修正・変更を依頼する</a>
+</div>
 </header>
 
 
 
 <div class="filter-area">
-  <h3>カテゴリ</h3>
+  <h3>製品の<b>カテゴリ</b>で絞り込む</h3>
   <label><input type="checkbox" class="category" value="category_circulator" /> サーキュレーター</label>
   <label><input type="checkbox" class="category" value="category_refrigerator" /> 冷蔵庫</label>
   <label><input type="checkbox" class="category" value="category_cleaner" /> 掃除機</label>
   <label><input type="checkbox" class="category" value="category_laundry" /> 洗濯機</label>
   <label><input type="checkbox" class="category" value="category_others" /> その他</label>
 
-  <h3>仕様</h3>
+  <h3>製品の<b>仕様</b>で絞り込む</h3>
   <label><input type="checkbox" class="spec" value="spec_wifi" /> Wi-Fi</label>
   <label><input type="checkbox" class="spec" value="spec_bluetooth" /> Bluetooth</label>
   <label><input type="checkbox" class="spec" value="spec_grounding" /> アース接続必要</label>
